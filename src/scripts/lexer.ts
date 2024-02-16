@@ -1,4 +1,5 @@
 import { Data } from "@/app/compiler/page"
+
 const TogoDictionary: { tipo: string; regex: RegExp }[] = [
     { tipo: "Palabra reservada", regex: /^fn\b/ },
     { tipo: "Palabra reservada", regex: /^str\b/ },
@@ -159,7 +160,7 @@ export const exampleBtn = (): string => {
         'if 12 == age {}',
         'if algo != algo {}',
         'for(i = 0, 1 < 5, i ++){}',
-        'str name: "pepe";',
+        'str name: "leo";',
         'num age: 30;',
         'bool married: true;',
     ];
