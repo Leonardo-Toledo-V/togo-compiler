@@ -1,6 +1,7 @@
 "use client"
 import { Textarea, Button } from "@nextui-org/react";
 import { cleanBtn, validateBtn, exampleBtn } from "../scripts/lexer"
+import {analyzeString} from "../scripts/parser"
 import { useState } from "react"
 
 export interface Data {
@@ -34,11 +35,17 @@ export default function Compiler() {
     const handleExampleBtn = () => {
         const value = exampleBtn();
         setInformation(value);
-    }
+    };
 
     const handleValidateBtn = () => {
         const data = validateBtn(information);
         setData(data)
+    };
+
+    const handleSynatxBtn = () => {
+        console.log(information)
+        const data = analyzeString(information);
+        console.log(data)
     }
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -70,7 +77,7 @@ export default function Compiler() {
                     Analizar
                 </Button>
                 <Button
-                    onPress={handleValidateBtn}
+                    onPress={handleSynatxBtn}
                     radius='sm'
                     variant="ghost"
                 >

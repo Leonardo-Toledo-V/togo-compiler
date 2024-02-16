@@ -1,4 +1,9 @@
-import { Data } from "@/app/compiler/page"
+import { Data } from "@/components/Compiler"
+
+export interface Token {
+    type: string;
+    value: string;
+}
 
 const TogoDictionary: { tipo: string; regex: RegExp }[] = [
     { tipo: "Palabra reservada", regex: /^fn\b/ },
@@ -40,7 +45,7 @@ let llavesList: string[] = [];
 let simbolosList: string[] = [];
 let unknownList: string[] = [];
 
-class Lexer {
+export class Lexer {
     input: string;
     pos: number;
     dictionary: { tipo: string; regex: RegExp }[];
@@ -51,7 +56,7 @@ class Lexer {
         this.dictionary = TogoDictionary;
     }
 
-    nextToken() {
+    nextToken(): Token | null {
         this.skipWhitespace();
         if (this.pos >= this.input.length) {
             return null;
