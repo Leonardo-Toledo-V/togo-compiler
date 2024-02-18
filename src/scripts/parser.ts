@@ -1,3 +1,4 @@
+import { todo } from 'node:test';
 import { Lexer, Token } from './lexer';
 
 export class Parser {
@@ -13,7 +14,6 @@ export class Parser {
             if (token === null) {
                 break;
             }
-
             switch (token.value) {
                 case 'str':
                 case 'num':
@@ -29,14 +29,11 @@ export class Parser {
                 case 'for':
                     this.parseForLoop();
                     break;
-                default:
-                    console.log('Error: Palabra reservada no reconocida.');
-                    break;
             }
         }
     }
 
-    parseVariableDeclaration(type : any): void {
+    parseVariableDeclaration(type: any): void {
         let token: Token | null = this.lexer.nextToken();
         if (token !== null && token.type === 'Identificador') {
             token = this.lexer.nextToken();
@@ -44,14 +41,13 @@ export class Parser {
                 token = this.lexer.nextToken();
                 if (token !== null && (token.type === 'Identificador' || token.type === 'Simbolos' || token.type === 'Palabra reservada')) {
                     const valorVariable = token.value;
-                    const tipoDato = type; // El tipo de dato es el identificador en este punto
-    
+                    const tipoDato = type;
                     token = this.lexer.nextToken();
                     if (token !== null && token.type === 'Simbolos' && token.value === ';') {
                         if ((tipoDato === 'str' && /^".*"$/.test(valorVariable)) ||
-                            (tipoDato === 'num' && /^-?\d+(\.\d+)?$/.test(valorVariable)) || // Permitir números enteros y decimales, positivos y negativos
+                            (tipoDato === 'num' && /^-?\d+(\.\d+)?$/.test(valorVariable)) ||
                             (tipoDato === 'bool' && (valorVariable === 'true' || valorVariable === 'false'))) {
-                            console.log(`Declaración de variable válida, variable de tipo ${type}`);
+                            console.log(`Declaración de variable válida`);
                         } else {
                             console.log(`Error: El valor "${valorVariable}" no coincide con el tipo de dato "${tipoDato}".`);
                         }
@@ -68,15 +64,48 @@ export class Parser {
             console.log('Error: Se esperaba un identificador para la variable.');
         }
     }
-    
-    
-    
-
-
 
 
     parseFunctionDeclaration(): void {
-        console.log('Declaración de función.');
+        // TODO falta agregar el codigo extra
+        // fn suma(num a, num b): num { codigo extra} 
+        let token: Token | null = this.lexer.nextToken();
+        if (token !== null && token.type === 'Identificador') {
+            token = this.lexer.nextToken();
+            if (token !== null && token.type === 'Paréntesis' && token.value === '(') {
+                token = this.lexer.nextToken();
+                const isComplete = this.parseParamater(token);
+                token = this.lexer.nextToken();
+                if (isComplete) {
+                    if (token !== null && token.type === 'Simbolos' && token.value === ':') {
+                        token = this.lexer.nextToken();
+                        if (token !== null && token.type === 'Palabra reservada' && (token.value === 'str' || token.value === 'num' || token.value === 'bool' || token.value === 'void')) {
+                            token = this.lexer.nextToken();
+                            if (token !== null && token.type === 'Llaves' && token.value === '{') {
+                                token = this.lexer.nextToken();
+                                if (token !== null && token.type === 'Llaves' && token.value === '}') {
+                                    console.log('Función declarada.')
+                                } else {
+                                    throw new Error('Error: Se esperaba "}" después del código de la función.');
+                                }
+                            } else {
+                                throw new Error('Error: Se esperaba "{" después del tipo de dato.');
+                            }
+                        } else {
+                            throw new Error('Error: Se esperaba un tipo de dato de retorno.');
+                        }
+                    } else {
+                        throw new Error('Error: Se esperaba ":" después de los parámetros.');
+                    }
+                } else {
+                    throw new Error('Error: no completo');
+                }
+            } else {
+                throw new Error('Error: Se esperaba "(" después del identificador.');
+            }
+        } else {
+            throw new Error('Error: Se esperaba un identificador para la función.');
+        }
     }
 
     parseConditional(): void {
@@ -86,17 +115,40 @@ export class Parser {
     parseForLoop(): void {
         console.log('Ciclo for.');
     }
+
+    parseParamater(token: Token | null): boolean {
+        if (token !== null && token.type === 'Palabra reservada' && (token.value === 'str' || token.value === 'num' || token.value === 'bool')) {
+            token = this.lexer.nextToken();
+            if (token !== null && token.type === 'Identificador') {
+                token = this.lexer.nextToken();
+                if (token !== null && token.type === 'Simbolos' && token.value === ',') {
+                    token = this.lexer.nextToken();
+                    if (token !== null && token.type === 'Paréntesis' && token.value === ')') {
+                        throw new Error('Error: Se esperaba otro parámetro en la funcion.');
+                    } else {
+                        return this.parseParamater(token);
+                    }
+                }
+            } else {
+                throw new Error('Error: Se esperaba un identificador para el parámetro.');
+            }
+        } else if (token !== null && token.type === 'Simbolos' && token.value === ')') {
+            return true;
+        }
+        return true;
+    }
 }
 
 export const analyzeString = (input: string | undefined): void => {
     if (input === undefined) {
-        console.error('No input provided.');
-        return;
+        const error = console.error('No input provided.');
+        return error;
     }
     try {
         const parser = new Parser(input);
-        parser.parse();
+        return parser.parse();
     } catch (error: any) {
-        console.error('Error during analysis:', error.message);
+        const errorMsg = console.error('Error during analysis:', error.message);
+        return errorMsg;
     }
 }

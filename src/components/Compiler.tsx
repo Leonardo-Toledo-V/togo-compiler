@@ -1,8 +1,9 @@
 "use client"
 import { Textarea, Button } from "@nextui-org/react";
 import { cleanBtn, validateBtn, exampleBtn } from "../scripts/lexer"
-import {analyzeString} from "../scripts/parser"
+import { analyzeString } from "../scripts/parser"
 import { useState } from "react"
+import MonacoEditor from 'react-monaco-editor';
 
 export interface Data {
     reservedWordsList: string;
@@ -17,6 +18,7 @@ export interface Data {
 export default function Compiler() {
     const [information, setInformation] = useState<string>();
     const [data, setData] = useState<Data | undefined>(undefined);
+    const [msg, setMsg] = useState<any>();
 
     const handleCleanBtn = () => {
         const value = cleanBtn();
@@ -37,15 +39,22 @@ export default function Compiler() {
         setInformation(value);
     };
 
+    const handleCompilerBtn = () => {
+        const data = validateBtn(information);
+        setData(data);
+        const msg = analyzeString(information);
+        setMsg(msg);
+    }
+
     const handleValidateBtn = () => {
         const data = validateBtn(information);
         setData(data)
     };
 
     const handleSynatxBtn = () => {
-        console.log(information)
-        const data = analyzeString(information);
-        console.log(data)
+        const msg = analyzeString(information);
+        //console.log(msg)
+        setMsg(msg);
     }
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -57,7 +66,7 @@ export default function Compiler() {
                 <h3 className="text-[#dfe6e9] mt-6 font-medium">Analizador léxico</h3>
             </div>
             <div className="flex flex-col w-full gap-y-2">
-                <Textarea
+{/*                 <Textarea
                     key="underlined"
                     variant="underlined"
                     id="editor"
@@ -68,6 +77,14 @@ export default function Compiler() {
                     labelPlacement="outside"
                     placeholder="Enter your example code"
                     className="col-span-12 md:col-span-6 mb-6 md:mb-0"
+                /> */}
+                <MonacoEditor
+                    className="pt-2"
+                    height="150"
+                    language="plaintext"
+                    theme="vs-dark"
+                    value={information}
+                    onChange={setInformation}
                 />
                 <Button
                     onPress={handleValidateBtn}
@@ -82,6 +99,13 @@ export default function Compiler() {
                     variant="ghost"
                 >
                     Sintaxis
+                </Button>
+                <Button
+                    onPress={handleCompilerBtn}
+                    radius='sm'
+                    variant="ghost"
+                >
+                    Compilar
                 </Button>
                 <Button
                     onPress={handleExampleBtn}
@@ -165,6 +189,10 @@ export default function Compiler() {
                             )}
                         </tbody>
                     </table>
+                </div>
+                <h3 className="text-[#dfe6e9] mt-6 font-medium">Analizador Sintáctico:</h3>
+                <div className="text-[#dfe6e9] mt-6 font-sm">
+                    {msg}
                 </div>
             </div>
         </div>
