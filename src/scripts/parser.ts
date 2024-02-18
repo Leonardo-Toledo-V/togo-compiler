@@ -109,11 +109,107 @@ export class Parser {
     }
 
     parseConditional(): void {
-        console.log('Condición evaluada.');
+        // if age > limit { codigo extra} , if age 12 == age { codigo extra} , if algo != algo { codigo extra}
+        let token: Token | null = this.lexer.nextToken();
+        if(token !== null && token.type === 'Identificador'){
+            token = this.lexer.nextToken();
+            if(token !== null && token.type === 'Simbolos' && (token.value === '==' || token.value === '!=' || token.value === '!==' || token.value === '===' || token.value === '<' || token.value === '<=' || token.value === '>' || token.value === '>=')){
+                token = this.lexer.nextToken();
+                if(token !== null && token.type === 'Identificador'){
+                    token = this.lexer.nextToken();
+                    if(token !== null && token.type === 'Llaves' && token.value === '{'){
+                        token = this.lexer.nextToken();
+                        if(token !== null && token.type === 'Llaves' && token.value === '}'){
+                            console.log('Condición válida.');
+                        }else{
+                            throw new Error('Error: Se esperaba "}" después del código de la condición.');
+                        }
+                    }else{
+                        throw new Error('Error: Se esperaba "{" después de la condición.');
+                    }
+                }else{
+                    throw new Error('Error: Se esperaba un valor para la condición.');
+                }
+            }else{
+                throw new Error('Error: Se esperaba un operador de comparación.');
+            }
+        }else{
+            throw new Error('Error: Se esperaba un identificador.');
+        }
     }
 
     parseForLoop(): void {
-        console.log('Ciclo for.');
+        let token: Token | null = this.lexer.nextToken();
+        if(token !== null && token.type === 'Paréntesis' && token.value === '('){
+            token = this.lexer.nextToken();
+            if(token !== null && token.type === 'Identificador'){
+                token = this.lexer.nextToken();
+                if(token !== null && token.type === 'Simbolos' && token.value === ':'){
+                    token = this.lexer.nextToken();
+                    if(token !== null && token.type === 'Identificador'){
+                        token = this.lexer.nextToken();
+                        if(token !== null && token.type === 'Simbolos' && token.value === ','){
+                            token = this.lexer.nextToken();
+                            if(token !== null && token.type === 'Identificador'){
+                                token = this.lexer.nextToken();
+                                if(token !== null && token.type === 'Simbolos' && (token.value === '==' || token.value === '!=' || token.value === '!==' || token.value === '===' || token.value === '<' || token.value === '<=' || token.value === '>' || token.value === '>=')){
+                                    token = this.lexer.nextToken();
+                                    if(token !== null && token.type === 'Identificador'){
+                                        token = this.lexer.nextToken();
+                                        if(token!== null && token.type === 'Simbolos' && token.value ===','){
+                                            token = this.lexer.nextToken();
+                                            if(token !== null && token.type === 'Identificador'){
+                                                token = this.lexer.nextToken();
+                                                if(token !== null && token.type === 'Operador' && (token.value === '++' || token.value === '--')){
+                                                    token = this.lexer.nextToken();
+                                                    if(token !== null && token.type === 'Paréntesis' && token.value === ')'){
+                                                        token = this.lexer.nextToken();
+                                                        if(token !== null && token.type === 'Llaves' && token.value === '{'){
+                                                            token = this.lexer.nextToken();
+                                                            if(token !== null && token.type === 'Llaves' && token.value === '}'){
+                                                                console.log('Ciclo for válido.');
+                                                            }else{
+                                                                throw new Error('Error: Se esperaba "}" después del código del ciclo for.');
+                                                            }
+                                                        }else{
+                                                            throw new Error('Error: Se esperaba "{" después de la condición.');
+                                                        }
+                                                    }else{
+                                                        throw new Error('Error: Se esperaba ")" después del código del ciclo for.');
+                                                    }
+                                                }else{
+                                                    throw new Error('Error: Se esperaba "++" o "--" después de la variable.');
+                                                }
+                                            }else{
+                                                throw new Error('Error: Se esperaba un identificador para la condición.');
+                                            }
+                                        }else{
+                                            throw new Error('Error: Se esperaba "," después de la condición.');
+                                        }
+                                    }else{
+                                        throw new Error('Error: Se esperaba un identificador para la condición.');
+                                    }
+                                }else{
+                                    throw new Error('Error: Se esperaba un operador de comparación.');
+                                }
+                            }else{
+                                throw new Error('Error: Se esperaba un identificador para la condición.');
+                            }
+                        }else{
+                            throw new Error('Error: Se esperaba "," después del valor inicial.');
+                        }
+                    }else{
+                        throw new Error('Error: Se esperaba un identificador para la condición.');
+                    }
+                }else{
+                    throw new Error('Error: Se esperaba "=" después del identificador.');
+                }
+            }else{
+                throw new Error('Error: Se esperaba un identificador para la variable.');
+            }
+        }else{
+            throw new Error('Error: Se esperaba "(" después de la palabra reservada "for".');
+        }
     }
 
     parseParamater(token: Token | null): boolean {

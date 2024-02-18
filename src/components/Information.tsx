@@ -136,18 +136,10 @@ export default function Information() {
                             {'for(alumno: 0, alumno < 30, alumno++){code}'}
                         </code>
                         <p>
-                            O bien, puedes poner el nombre de una sola variable, que ya haya
-                            sido declarada para usarla dentro del for, como se muestra a
-                            continuación:
-                        </p>
-                        <code className="bg-[#353b48] rounded-md px-3">
-                            {'for(alumno, alumno < 30, alumno++){ code }'}
-                        </code>
-                        <p>
                             Siguiendo con la estructura del for, tenemos la parte de
                             <code className="bg-[#353b48] rounded-md px-3"
-                            >iterable op goal</code
-                            >, que hace referencia al valor donde el ciclo deberá detenerse,
+                            >iterable op goal</code>, 
+                            que hace referencia al valor donde el ciclo deberá detenerse,
                             donde
                             <code className="bg-[#353b48] rounded-md px-3">iterable</code> es el
                             valor que definimos como iterador inicial,
@@ -164,7 +156,7 @@ export default function Information() {
                             escrito, como se muestra en el siguiente segmento de código:
                         </p>
                         <code className="bg-[#353b48] rounded-md px-3">
-                            {'for(alumno, alumno < 30, alumno++){ code }'}
+                            {'for(alumno: 0, alumno < 30, alumno++){ code }'}
                         </code>
                         <p>
                             Luego continuamos con la sección de
