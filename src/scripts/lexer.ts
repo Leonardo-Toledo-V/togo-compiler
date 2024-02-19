@@ -161,13 +161,36 @@ export const cleanBtn = (): string => {
 
 export const exampleBtn = (): string => {
     const examples: string[] = [
-        'fn setPassowrd(str pwd): void{}',
-        'if 12 == age {}',
-        'if algo != algo {}',
-        'for(i = 0, 1 < 5, i ++){}',
+        `fn suma(num a, num b, num c): void{
+
+}`,
+        `if 12 == age {
+
+}`,
+        `if algo != algo {
+
+}`,
+        `for(i: 0, 1 < 5, i ++){
+            str name: "leo";
+}`,
         'str name: "leo";',
         'num age: 30;',
         'bool married: true;',
+        `fn setPassowrd(str pwd): void{
+            if password == "contraseña1"{
+                str password: "pwd";
+            }
+}`,
+        `fn darVueltas(str name, num age, bool alone): void{
+            for(i: 10, 1 < 10, i --){
+                if algo === algo {
+                    str name: "Leonardo";
+                    num cuatro: 8;
+                    bool aprovado: true;
+                }
+            }
+}
+        `,
     ];
     return examples[Math.floor(Math.random() * examples.length)];
 };

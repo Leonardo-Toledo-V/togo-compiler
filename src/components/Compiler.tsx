@@ -39,13 +39,6 @@ export default function Compiler() {
         setInformation(value);
     };
 
-    const handleCompilerBtn = () => {
-        const data = validateBtn(information);
-        setData(data);
-        const msg = analyzeString(information);
-        setMsg(msg);
-    }
-
     const handleValidateBtn = () => {
         const data = validateBtn(information);
         setData(data)
@@ -65,22 +58,10 @@ export default function Compiler() {
             <div className="flex justify-center items-center text-2xl">
                 <h3 className="text-[#dfe6e9] mt-6 font-medium">Analizador léxico</h3>
             </div>
-            <div className="flex flex-col w-full gap-y-2">
-{/*                 <Textarea
-                    key="underlined"
-                    variant="underlined"
-                    id="editor"
-                    label="Code"
-                    value={information}
-                    onChange={handleChange}
-                    color='success'
-                    labelPlacement="outside"
-                    placeholder="Enter your example code"
-                    className="col-span-12 md:col-span-6 mb-6 md:mb-0"
-                /> */}
+            <div className="flex flex-col w-full gap-y-4">
                 <MonacoEditor
                     className="pt-2"
-                    height="150"
+                    height="170"
                     language="plaintext"
                     theme="vs-dark"
                     value={information}
@@ -99,13 +80,6 @@ export default function Compiler() {
                     variant="ghost"
                 >
                     Sintaxis
-                </Button>
-                <Button
-                    onPress={handleCompilerBtn}
-                    radius='sm'
-                    variant="ghost"
-                >
-                    Compilar
                 </Button>
                 <Button
                     onPress={handleExampleBtn}
