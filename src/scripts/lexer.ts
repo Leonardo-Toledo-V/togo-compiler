@@ -185,8 +185,6 @@ export const exampleBtn = (): string => {
             for(i: 10, 1 < 10, i --){
                 if algo === algo {
                     str name: "Leonardo";
-                    num cuatro: 8;
-                    bool aprovado: true;
                 }
             }
 }

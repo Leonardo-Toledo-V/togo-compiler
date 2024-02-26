@@ -1,5 +1,5 @@
 "use client"
-import { Textarea, Button } from "@nextui-org/react";
+import { Button } from "@nextui-org/react";
 import { cleanBtn, validateBtn, exampleBtn } from "../scripts/lexer"
 import { analyzeString } from "../scripts/parser"
 import { useState } from "react"
@@ -18,7 +18,8 @@ export interface Data {
 export default function Compiler() {
     const [information, setInformation] = useState<string>();
     const [data, setData] = useState<Data | undefined>(undefined);
-    const [msg, setMsg] = useState<any>();
+    const [msg, setMsg] = useState<string[]>();
+    const [msgError, setMsgError] = useState<string[]>([]);
 
     const handleCleanBtn = () => {
         const value = cleanBtn();
@@ -31,6 +32,8 @@ export default function Compiler() {
             symbolsList: "",
             unknownList: "",
         })
+        setMsg([]);
+        setMsgError([]);
         setInformation(value);
     };
 
@@ -45,14 +48,17 @@ export default function Compiler() {
     };
 
     const handleSynatxBtn = () => {
+        setMsg([]);
+        setMsgError([]);
         const msg = analyzeString(information);
-        //console.log(msg)
-        setMsg(msg);
-    }
-
-    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setInformation(event.target.value);
+        console.log(msg);
+        if (msg && msg.length > 0 && msg[0].startsWith("Error:")) {
+            setMsgError(msg);
+        } else {
+            setMsg(msg);
+        }
     };
+
     return (
         <div className="bg-[#1e272e] border-l border-gray-500 w-full p-6 h-screen flex flex-col items-center overflow-auto">
             <div className="flex justify-center items-center text-2xl">
@@ -166,7 +172,17 @@ export default function Compiler() {
                 </div>
                 <h3 className="text-[#dfe6e9] mt-6 font-medium">Analizador Sintáctico:</h3>
                 <div className="text-[#dfe6e9] mt-6 font-sm">
-                    {msg}
+                    {msg?.map((item, i) => (
+                        <p key={i} className="bg-[#05c46ba6] pl-4 pt-0.5 text-[#dfe6e9] font-bold rounded-md mb-3">
+                            {item}
+                        </p>
+                    ))}
+                    {msgError.length > 0 ? (
+                        <p className="bg-[#ff6b6b] pl-4 pt-0.5 text-[#dfe6e9] font-bold rounded-md mb-3">
+                            {msgError[0]}
+                        </p>
+                    ) : null}
+
                 </div>
             </div>
         </div>
