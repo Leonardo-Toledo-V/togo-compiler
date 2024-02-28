@@ -18,7 +18,7 @@ export interface Data {
 export default function Compiler() {
     const [information, setInformation] = useState<string>();
     const [data, setData] = useState<Data | undefined>(undefined);
-    const [msg, setMsg] = useState<string[]>();
+    const [msg, setMsg] = useState<string[]>([]);
     const [msgError, setMsgError] = useState<string[]>([]);
 
     const handleCleanBtn = () => {
@@ -47,17 +47,31 @@ export default function Compiler() {
         setData(data)
     };
 
+    function isError(message: any) {
+        return message.startsWith("Error:");
+    }
+
     const handleSynatxBtn = () => {
         setMsg([]);
         setMsgError([]);
         const msg = analyzeString(information);
+        const newMsg = [];
+        const newMsgError = [];
+        
         console.log(msg);
-        if (msg && msg.length > 0 && msg[0].startsWith("Error:")) {
-            setMsgError(msg);
-        } else {
-            setMsg(msg);
+        for (let i = 0; i < msg.length; i++) {
+            if (isError(msg[i])) {
+                newMsgError.push(msg[i]);
+            } else {
+                newMsg.push(msg[i]);
+            }
         }
+
+        setMsg(newMsg);
+        setMsgError(newMsgError);
     };
+
+
 
     return (
         <div className="bg-[#1e272e] border-l border-gray-500 w-full p-6 h-screen flex flex-col items-center overflow-auto">
@@ -172,16 +186,18 @@ export default function Compiler() {
                 </div>
                 <h3 className="text-[#dfe6e9] mt-6 font-medium">Analizador Sintáctico:</h3>
                 <div className="text-[#dfe6e9] mt-6 font-sm">
-                    {msg?.map((item, i) => (
+                    {msg.map((item, i) => (
                         <p key={i} className="bg-[#05c46ba6] pl-4 pt-0.5 text-[#dfe6e9] font-bold rounded-md mb-3">
                             {item}
                         </p>
                     ))}
-                    {msgError.length > 0 ? (
-                        <p className="bg-[#ff6b6b] pl-4 pt-0.5 text-[#dfe6e9] font-bold rounded-md mb-3">
-                            {msgError[0]}
-                        </p>
-                    ) : null}
+                    {msgError && msgError.length > 0 && (
+                        msgError.map((item, i) => (
+                            <p key={i} className="bg-[#ff6b6b] pl-4 pt-0.5 text-[#dfe6e9] font-bold rounded-md mb-3">
+                                {item}
+                            </p>
+                        ))
+                    )}
 
                 </div>
             </div>

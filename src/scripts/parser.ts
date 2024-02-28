@@ -15,27 +15,31 @@ export class Parser {
     }
 
     parse(): string[] {
-        while (true) {
-            let token: Token | null = this.lexer.nextToken();
-            if (token === null) {
-                break;
+        try {
+            while (true) {
+                let token: Token | null = this.lexer.nextToken();
+                if (token === null) {
+                    break;
+                }
+                switch (token.value) {
+                    case 'str':
+                    case 'num':
+                    case 'bool':
+                        this.parseVariableDeclaration(token.value, token);
+                        break;
+                    case 'fn':
+                        this.parseFunctionDeclaration(token);
+                        break;
+                    case 'if':
+                        this.parseConditional(token);
+                        break;
+                    case 'for':
+                        this.parseForLoop(token);
+                        break;
+                }
             }
-            switch (token.value) {
-                case 'str':
-                case 'num':
-                case 'bool':
-                    this.parseVariableDeclaration(token.value, token);
-                    break;
-                case 'fn':
-                    this.parseFunctionDeclaration(token);
-                    break;
-                case 'if':
-                    this.parseConditional(token);
-                    break;
-                case 'for':
-                    this.parseForLoop(token);
-                    break;
-            }
+        } catch (error: any) {
+            this.messages.push(error.message);
         }
         return this.messages;
     }
@@ -55,21 +59,20 @@ export class Parser {
                             (tipoDato === 'num' && /^-?\d+(\.\d+)?$/.test(valorVariable)) ||
                             (tipoDato === 'bool' && (valorVariable === 'true' || valorVariable === 'false'))) {
                             this.messages.push(`Declaración de variable válida de tipo ${tipoDato} con valor ${valorVariable}`);
-                            //console.log(`Declaración de variable válida`);
                         } else {
-                            this.messages.push(`Error: El valor "${valorVariable}" no coincide con el tipo de dato "${tipoDato}".`);
+                            throw new Error(`Error: El valor "${valorVariable}" no coincide con el tipo de dato "${tipoDato}".`);
                         }
                     } else {
-                        this.messages.push(`Error: Se esperaba ";" después del valor.`);
+                        throw new Error(`Error: Se esperaba ";" después del valor.`);
                     }
                 } else {
-                    this.messages.push(`Error: Se esperaba un valor para la variable.`);
+                    throw new Error(`Error: Se esperaba un valor para la variable.`);
                 }
             } else {
-                this.messages.push(`Error: Se esperaba ":" después del identificador.`);
+                throw new Error(`Error: Se esperaba ":" después del identificador.`);
             }
         } else {
-            this.messages.push(`Error: Se esperaba un identificador para la variable.`);
+            throw new Error(`Error: Se esperaba un identificador para la variable.`);
         }
     }
 
@@ -92,28 +95,28 @@ export class Parser {
                                 this.openKey++
                                 token = this.lexer.nextToken();
                                 this.parseBodyCode(token);
-                                if(this.openKey === this.closeKey){
+                                if (this.openKey === this.closeKey) {
                                     this.messages.push("Función correcta")
-                                }else {
-                                    this.messages.push('Error: Se esperaba "}" después del código de la función.');
+                                } else {
+                                    throw new Error('Error: Se esperaba "}" después del código de la función.');
                                 }
                             } else {
-                                this.messages.push('Error: Se esperaba "{" después del tipo de dato.');
+                                throw new Error('Error: Se esperaba "{" después del tipo de dato.');
                             }
                         } else {
-                            this.messages.push('Error: Se esperaba un tipo de dato de retorno.');
+                            throw new Error('Error: Se esperaba un tipo de dato de retorno.');
                         }
                     } else {
-                        this.messages.push('Error: Se esperaba ":" después de los parámetros.');
+                        throw new Error('Error: Se esperaba ":" después de los parámetros.');
                     }
                 } else {
-                    this.messages.push('Error: no completo');
+                    throw new Error('Error: no completo');
                 }
             } else {
-                this.messages.push('Error: Se esperaba "(" después del identificador.');
+                throw new Error('Error: Se esperaba "(" después del identificador.');
             }
         } else {
-            this.messages.push('Error: Se esperaba un identificador para la función.');
+            throw new Error('Error: Se esperaba un identificador para la función.');
         }
     }
 
@@ -130,23 +133,22 @@ export class Parser {
                         this.openKey++
                         token = this.lexer.nextToken();
                         this.parseBodyCode(token);
-                        if(this.openKey === this.closeKey){
+                        if (this.openKey === this.closeKey) {
                             this.messages.push("Condicional correcta")
-                            //console.log("Condicional correcta")
-                        }else {
-                            this.messages.push('Error: Se esperaba "}" después del código de la función.');
+                        } else {
+                            throw new Error('Error: Se esperaba "}" después del código de la función.');
                         }
                     } else {
-                        this.messages.push('Error: Se esperaba "{" después del tipo de dato.');
+                        throw new Error('Error: Se esperaba "{" después del tipo de dato.');
                     }
                 } else {
-                    this.messages.push('Error: Se esperaba un identificador para la condición.');
+                    throw new Error('Error: Se esperaba un identificador para la condición.');
                 }
             } else {
-                this.messages.push('Error: Se esperaba un operador de comparación.');
+                throw new Error('Error: Se esperaba un operador de comparación.');
             }
         } else {
-            this.messages.push('Error: Se esperaba un identificador para la condición.');
+            throw new Error('Error: Se esperaba un identificador para la condición.');
         }
     }
 
@@ -180,49 +182,49 @@ export class Parser {
                                                             this.openKey++
                                                             token = this.lexer.nextToken();
                                                             this.parseBodyCode(token);
-                                                            if(this.openKey === this.closeKey){
+                                                            if (this.openKey === this.closeKey) {
                                                                 this.messages.push("Ciclo for correcto")
-                                                            }else {
-                                                                this.messages.push('Error: Se esperaba "}" después del código de la función.');
+                                                            } else {
+                                                                throw new Error('Error: Se esperaba "}" después del código de la función.');
                                                             }
                                                         } else {
-                                                            this.messages.push('Error: Se esperaba "{" después del tipo de dato.');
+                                                            throw new Error('Error: Se esperaba "{" después del tipo de dato.');
                                                         }
                                                     } else {
-                                                        this.messages.push('Error: Se esperaba ")" después del código del ciclo for.');
+                                                        throw new Error('Error: Se esperaba ")" después del código del ciclo for.');
                                                     }
                                                 } else {
-                                                    this.messages.push('Error: Se esperaba "++" o "--" después de la variable.');
+                                                    throw new Error('Error: Se esperaba "++" o "--" después de la variable.');
                                                 }
                                             } else {
-                                                this.messages.push('Error: Se esperaba un identificador para la condición.');
+                                                throw new Error('Error: Se esperaba un identificador para la condición.');
                                             }
                                         } else {
-                                            this.messages.push('Error: Se esperaba "," después del valor inicial.');
+                                            throw new Error('Error: Se esperaba "," después del valor inicial.');
                                         }
                                     } else {
-                                        this.messages.push('Error: Se esperaba un identificador para la condición.');
+                                        throw new Error('Error: Se esperaba un identificador para la condición.');
                                     }
                                 } else {
-                                    this.messages.push('Error: Se esperaba un operador de comparación.');
+                                    throw new Error('Error: Se esperaba un operador de comparación.');
                                 }
                             } else {
-                                this.messages.push('Error: Se esperaba un identificador para la condición.');
+                                throw new Error('Error: Se esperaba un identificador para la condición.');
                             }
                         } else {
-                            this.messages.push('Error: Se esperaba "," después del valor inicial.');
+                            throw new Error('Error: Se esperaba "," después del valor inicial.');
                         }
                     } else {
-                        this.messages.push('Error: Se esperaba un identificador para la variable.');
+                        throw new Error('Error: Se esperaba un identificador para la variable.');
                     }
                 } else {
-                    this.messages.push('Error: Se esperaba ":" después del identificador.');
+                    throw new Error('Error: Se esperaba ":" después del identificador.');
                 }
             } else {
-                this.messages.push('Error: Se esperaba un identificador para la variable.');
+                throw new Error('Error: Se esperaba un identificador para la variable.');
             }
         } else {
-            this.messages.push('Error: Se esperaba "(" después de la palabra reservada "for".');
+            throw new Error('Error: Se esperaba "(" después de la palabra reservada "for".');
         }
     }
 
@@ -234,13 +236,13 @@ export class Parser {
                 if (token !== null && token.type === 'Simbolos' && token.value === ',') {
                     token = this.lexer.nextToken();
                     if (token !== null && token.type === 'Paréntesis' && token.value === ')') {
-                        this.messages.push('Error: Se esperaba otro parámetro en la funcion.');
+                        throw new Error('Error: Se esperaba otro parámetro en la funcion.');
                     } else {
                         return this.parseParamater(token);
                     }
                 }
             } else {
-                this.messages.push('Error: Se esperaba un identificador para el parámetro.');
+                throw new Error('Error: Se esperaba un identificador para el parámetro.');
             }
         } else if (token !== null && token.type === 'Simbolos' && token.value === ')') {
             return true;
@@ -252,7 +254,7 @@ export class Parser {
         while (true) {
             if (token === null) {
                 break;
-            }   
+            }
             switch (token.value) {
                 case 'str':
                 case 'num':
@@ -269,9 +271,10 @@ export class Parser {
                     this.parseForLoop(token);
                     break;
                 case '}':
-                    this.closeKey ++
+                    this.closeKey++
                     break;
                 default:
+                    throw new Error('Error: Se esperaba una declaración de variable, función, condición o ciclo for. dentro del cuerpo de la función.');
                     break;
             }
             token = this.lexer.nextToken();
